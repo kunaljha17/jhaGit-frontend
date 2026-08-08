@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 import SkeletonLoader from "../ui/SkeletonLoader";
 import axiosClient from "../../api/axiosClient";
-import "./dashboard.css";
+import "./Dashboard.css"
 
 /** Format a date as relative time */
 function formatRelativeTime(dateStr) {
