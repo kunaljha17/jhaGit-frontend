@@ -14,10 +14,17 @@
   justify-content: center;
 }
 
-.auth-logo {
-  width: 48px;
-  height: 48px;
-  color: var(--text-primary);
+.octicon-logo,
+.auth-logo-img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+
+  transition: transform 0.2s ease;
+}
+  .octicon-logo,
+ .auth-logo-img {
+  transform: scale(1.08);
 }
 
 .auth-card {
