@@ -3,17 +3,40 @@ import HeatMap from "@uiw/react-heat-map";
 import axiosClient from "../../api/axiosClient";
 
 /**
- * GitHub-style 5-level color scale.
- * The library auto-distributes these across the user's max count
- * using proportional thresholds via its internal convertPanelColors().
- *
- * Level 0: #2d333b  — Gray (no activity, visible against #161b22 background)
- * Level 1: #0e4429  — Dark green (low activity)
- * Level 2: #006d32  — Medium green
- * Level 3: #26a641  — Bright green
- * Level 4: #39d353  — Brightest green (peak activity)
+ * 5-level GitHub-inspired contribution color scale:
+ * - Empty (0): #2d333b (Visible slate-gray against dark #161b22 surface)
+ * - Level 1 (1–2): #0e4429 (Dark green - minor activity like 1-2 file edits/commits)
+ * - Level 2 (3–5): #006d32 (Medium green - moderate activity like creating a repo or multiple edits)
+ * - Level 3 (6–9): #26a641 (Bright green - high activity like repos + issues + commits)
+ * - Level 4 (10+): #39d353 (Peak green - intense daily activity)
  */
-const PANEL_COLORS = ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"];
+const COLOR_SCALE = {
+  EMPTY: "#2d333b",
+  LEVEL_1: "#0e4429",
+  LEVEL_2: "#006d32",
+  LEVEL_3: "#26a641",
+  LEVEL_4: "#39d353",
+};
+
+const LEGEND_COLORS = [
+  COLOR_SCALE.EMPTY,
+  COLOR_SCALE.LEVEL_1,
+  COLOR_SCALE.LEVEL_2,
+  COLOR_SCALE.LEVEL_3,
+  COLOR_SCALE.LEVEL_4,
+];
+
+/**
+ * Determine exact cell fill color based on contribution count
+ */
+const getCellFill = (count) => {
+  const num = Number(count) || 0;
+  if (num <= 0) return COLOR_SCALE.EMPTY;
+  if (num <= 2) return COLOR_SCALE.LEVEL_1;
+  if (num <= 5) return COLOR_SCALE.LEVEL_2;
+  if (num <= 9) return COLOR_SCALE.LEVEL_3;
+  return COLOR_SCALE.LEVEL_4;
+};
 
 const HeatMapProfile = ({ userId }) => {
   const [activityData, setActivityData] = useState([]);
@@ -65,10 +88,26 @@ const HeatMapProfile = ({ userId }) => {
         startDate={startDate}
         rectSize={14}
         space={3}
-        rectProps={{
-          rx: 2.5,
+        rectRender={(props, data) => {
+          const count = data?.count || 0;
+          const fill = getCellFill(count);
+          return (
+            <rect
+              {...props}
+              fill={fill}
+              rx={2.5}
+            >
+              <title>{`${count} contribution${count === 1 ? "" : "s"} on ${data?.date}`}</title>
+            </rect>
+          );
         }}
-        panelColors={PANEL_COLORS}
+        panelColors={{
+          0: COLOR_SCALE.EMPTY,
+          1: COLOR_SCALE.LEVEL_1,
+          3: COLOR_SCALE.LEVEL_2,
+          6: COLOR_SCALE.LEVEL_3,
+          10: COLOR_SCALE.LEVEL_4,
+        }}
       />
       {/* Less → More color legend */}
       <div style={{
@@ -81,7 +120,7 @@ const HeatMapProfile = ({ userId }) => {
         color: "var(--text-muted)",
       }}>
         <span>Less</span>
-        {PANEL_COLORS.map((color, i) => (
+        {LEGEND_COLORS.map((color, i) => (
           <div
             key={i}
             style={{
