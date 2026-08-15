@@ -19,6 +19,9 @@
   --shadow-sm: 0 1px 0 rgba(27, 31, 36, 0.04);
   --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.2);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* Heatmap default cell fill — the @uiw/react-heat-map library reads this */
+  --rhm-rect: #2d333b;
 }
 
 *, *::before, *::after {

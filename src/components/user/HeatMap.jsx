@@ -2,26 +2,21 @@ import React, { useEffect, useState } from "react";
 import HeatMap from "@uiw/react-heat-map";
 import axiosClient from "../../api/axiosClient";
 
-const getPanelColors = (maxCount) => {
-  const colors = { 0: "#161b22" };
-  const upperLimit = Math.max(maxCount, 25);
-  for (let i = 1; i <= upperLimit; i++) {
-    if (i <= 2) {
-      colors[i] = "#0e4429";
-    } else if (i <= 5) {
-      colors[i] = "#006d32";
-    } else if (i <= 9) {
-      colors[i] = "#26a641";
-    } else {
-      colors[i] = "#39d353";
-    }
-  }
-  return colors;
-};
+/**
+ * GitHub-style 5-level color scale.
+ * The library auto-distributes these across the user's max count
+ * using proportional thresholds via its internal convertPanelColors().
+ *
+ * Level 0: #2d333b  — Gray (no activity, visible against #161b22 background)
+ * Level 1: #0e4429  — Dark green (low activity)
+ * Level 2: #006d32  — Medium green
+ * Level 3: #26a641  — Bright green
+ * Level 4: #39d353  — Brightest green (peak activity)
+ */
+const PANEL_COLORS = ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"];
 
 const HeatMapProfile = ({ userId }) => {
   const [activityData, setActivityData] = useState([]);
-  const [panelColors, setPanelColors] = useState(getPanelColors(10));
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setFullYear(d.getFullYear() - 1);
@@ -42,9 +37,6 @@ const HeatMapProfile = ({ userId }) => {
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(today.getFullYear() - 1);
         setStartDate(oneYearAgo);
-
-        const maxCount = Math.max(...data.map((d) => d.count), 1);
-        setPanelColors(getPanelColors(maxCount));
       } catch (err) {
         console.error("Error fetching activity data:", err);
       }
@@ -76,8 +68,32 @@ const HeatMapProfile = ({ userId }) => {
         rectProps={{
           rx: 2.5,
         }}
-        panelColors={panelColors}
+        panelColors={PANEL_COLORS}
       />
+      {/* Less → More color legend */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        gap: "4px",
+        marginTop: "10px",
+        fontSize: "0.75rem",
+        color: "var(--text-muted)",
+      }}>
+        <span>Less</span>
+        {PANEL_COLORS.map((color, i) => (
+          <div
+            key={i}
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "2px",
+              backgroundColor: color,
+            }}
+          />
+        ))}
+        <span>More</span>
+      </div>
     </div>
   );
 };
