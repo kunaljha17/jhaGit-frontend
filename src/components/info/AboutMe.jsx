@@ -57,7 +57,7 @@ const AboutMe = () => {
                 <h3>Nestify</h3>
                 <p>Full-stack property and hotel listings web application built with MERN stack.</p>
                 <a
-                  href="https://nestify-1-pox5.onrender.com/listings"
+                  href="https://nestify.kunalkj.dev/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="project-link"
@@ -70,7 +70,7 @@ const AboutMe = () => {
                 <h3>Weather App</h3>
                 <p>Interactive real-time weather forecasting application with location support.</p>
                 <a
-                  href="https://weather-app-kunalkumar.vercel.app/"
+                  href="https://skycast.kunalkj.dev/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="project-link"
